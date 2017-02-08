@@ -34,11 +34,11 @@ grafana_artifact_filename := grafana_$(GRAFANA_VERSION)_amd64.deb
 #   curl_get_url - URL to the artifact
 #   curl_info_args - curl args and URL used to test access to the artifact
 #
+
 ifeq ($(artifact_store), artifactory)
 #
 # Artifactory source for .deb
 #
-
 artifactory_base_url := https://artifactory.viasat.com/artifactory
 grafana_subrepo := databus-deb/grafana
 
@@ -78,8 +78,8 @@ endif
 tmpfile:=$(shell mktemp /tmp/grafanabuild.XXXXXX)
 
 # To avoid lengthy fail/debug cycles inside the docker builds, we pre-check accessibility of the .deb artifact
-#     1) credentials are valid
-#     2) target artifact exists
+#     1) target artifact exists
+#     2) credentials are valid
 #   Using the Artifactory file info API will verify both in a fairly reasonable length of time
 #
 .PHONY: check_artifact
@@ -97,9 +97,8 @@ build: check_artifact
 	@echo Building version tagged docker image
 	docker build --build-arg GRAFANA_VERSION=$(GRAFANA_VERSION) --build-arg DEB_URL=$(curl_get_url) --tag "grafana/grafana:$(DOCKER_TAG)"  --no-cache=true .
 ifdef RELEASE_BUILD
-	@echo Building latest tagged docker image
-#	*** TODO *** why not just do a 'docker tag'?
-	docker build --build-arg GRAFANA_VERSION=$(GRAFANA_VERSION) --build-arg DEB_URL=$(curl_get_url) --tag "grafana/grafana:latest"  --no-cache=true .
+	@echo Tagging release image as latest
+	docker tag grafana/grafana:$(DOCKER_TAG) grafana/grafana:latest
 endif
 
 

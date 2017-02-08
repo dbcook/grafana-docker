@@ -1,19 +1,16 @@
 FROM debian:jessie
 
+# insert Grafana version into environment for use by derived containers
 ARG GRAFANA_VERSION
 ENV GRAFANA_VERSION ${GRAFANA_VERSION}
 
 # URL where a grafana .deb of GRAFANA_VERSION can be retrieved via curl
-#   Original curl URL pointing to grafana AWS S3 bucket
-#ENV DEB_URL ${DEB_URL:-https://grafanarel.s3.amazonaws.com/builds/grafana_${GRAFANA_VERSION}_amd64.deb}
 ARG DEB_URL
-ENV DEB_URL ${DEB_URL:-https://artifactory.viasat.com/artifactory/databus-deb/grafana/grafana_${GRAFANA_VERSION}_amd64.deb}
+ENV DEB_URL ${DEB_URL}
 
-# username/password if needed for curl command (e.g. for Artifactory)
-ARG CURL_USERNAME
-ARG CURL_PASSWORD
+# Additional curl options such as -u credentials if needed
 ARG CURL_OPTS
-ENV CURL_OPTS ${CURL_OPTS:--u ${CURL_USERNAME}:${CURL_PASSWORD}}
+ENV CURL_OPTS ${CURL_OPTS}
 
 RUN apt-get update && \
     apt-get -y --no-install-recommends install libfontconfig curl ca-certificates && \
